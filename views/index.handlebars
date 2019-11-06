@@ -1,0 +1,36 @@
+<div class="row">
+<form action="/reg_numbers" method="get">
+    <h1>Registration Numbers</h1>
+    <div class="col-7">
+    </div>
+    
+    <div class ="col-11">Enter the registration number
+         
+        <input type="text" class="regName"  placeholder="eg CA 1235" name="" value="" id="field_1"  maxlength= 10 > 
+    </div>
+    <div class = "col-10">
+            <button id="addButton" type="button" name="Add" value="add">Add</button>
+            <button class="resetButton" type="button" name="reset" value="Show">Reset</button>
+     </div>
+
+     <div class = "col-9">
+        <input type="radio" name="regNumber" class="RegTypeRadio" value="CA" id="id">CapeTown
+        <input type="radio" name="regNumber" class="RegTypeRadio" value="CN" id="id">Wellington
+        <input type="radio" name="regNumber" class="RegTypeRadio" value="CL" id="id">Stellenbosch
+        <input type="radio" name="regNumber" class="RegTypeRadio" Value="" id="id" checked>SelectAll
+
+     </div>
+  
+     <div class ="col-8">
+            <button class="showButton" type="button" name="show" value="Show">FILTER</button>
+     </div>
+  
+
+     <div class="col-5">
+     <ul class="numberPlates"></ul>
+    </div>
+   
+    </div>
+    </form>
+     
+ 
