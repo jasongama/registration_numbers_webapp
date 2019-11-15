@@ -25,14 +25,18 @@
     margin: 30px auto;
   }
   .col-9{
-    width: 96%;
-    text-align: center;
-    margin: 30px auto;
+  width: 96%;
+  text-align: center;  
+  margin:  auto;
+  padding: auto;
+  font-weight: bold;
   }
   .col-8{
     width: 96%;
-    text-align: center;
-    margin: 30px auto;
+  text-align: center;  
+  margin:  auto;
+  padding: auto;
+  font-weight: bold;
   }
   .col-7{
     width: 96%;
@@ -52,7 +56,7 @@
    
   
   }
-   li{
+   .numberPlates{
   background: yellow;
    border: black solid;
    border-radius: 5px;
@@ -67,5 +71,7 @@
     border-radius: 5px;
     justify-content: center ;
     display: inline;
-    margin-left: 2em;
+    margin: center;
+    padding: auto;
+
   }
