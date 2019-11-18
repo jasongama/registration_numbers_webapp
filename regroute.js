@@ -1,8 +1,9 @@
 module.exports=function regRouter(regNumbers){
     async function index(req,res){
                res.render("index", {   
-               numberPlates: await regNumbers.getReg(),
-                // message: req.flash('error'),
+               numberPlates: await regNumbers.finalList(),
+             //   regNumber: await regNumbers.fliter(res.body.regNumber)
+                message: req.flash('error')
             })
          
         

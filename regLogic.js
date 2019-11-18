@@ -2,67 +2,68 @@ module.exports = function RegFactory(pool) {
 
 
     var holdingNoPlate = [];
-    
+    var final = [];
+    var capetown;
+    var Wellington;
+    var Stellenbosch;
     var errMessage = "";
+    var check;
 
 
     async function addRegNumbers(plate) {
         var regex = /[!@#$%^&*();,.?"^$:^+=${'}`_;''"\[.*?\]|<>]/i
         let testgex = regex.test(plate)
-       var regStore = plate
+        var regStore = plate
         var regs = regStore.split(' ')
         regs[0] = regs[0].toUpperCase()
-        let newReg = regs.join(' ') 
-        console.log(newReg);
+        let newReg = regs.join(' ')
 
-        if(regStore !== ''){
-        if (!testgex === true && plate.length > 0) {
-            if (newReg.startsWith("CA ") || newReg.startsWith("CN ") || newReg.startsWith("CL ")) {
-                 let database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
-                 if (database.rows.length === 0) {
-                    if (!holdingNoPlate.includes(newReg)) {
-                        holdingNoPlate.push(newReg)
-                        console.log(holdingNoPlate);
-                        return true;
+        if (regStore !== '') {
+            if (!testgex === true && newReg.length > 0) {
+                if (newReg.startsWith("CA ") || newReg.startsWith("CN ") || newReg.startsWith("CL ")) {
+                    let database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
+                    check = await pool.query('select * from registrations')
+                    if (database.rows.length === 0) {
+                        if (!holdingNoPlate.includes(newReg)) {
+                            holdingNoPlate.push(newReg)
+
+                        }
+                        if (newReg.startsWith("CA ")) {
+                            // console.log('reg ' + newReg)
+                            await pool.query('insert into registrations (descriptions , towns_id) values ($1, $2)', [newReg, 1]);
+                            capetown = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 1;')
+                            final = capetown.rows
+
+                            return capetown.rows;
+                        }
+                        if (newReg.startsWith("CN ")) {
+                            await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 2])
+                            Wellington = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 2;')
+                            final = Wellington.rows
+                            return Wellington.rows;
+                        }
+                        if (newReg.startsWith("CL ")) {
+                            await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 3])
+                            Stellenbosch = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 3;')
+                            final = Stellenbosch.rows;
+                            return Stellenbosch.rows;
+                        }
+                    } else {
+                        // this doesn't accept duplicate
+                        errMessage = "The registration number already exist";
                     }
-                if (newReg.startsWith("CA ")) {
-                    await pool.query('insert into registrations (descriptions , towns_id) values ($1, $2)', [newReg, 1]);
-                    let capetown = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 1;')
-                    return capetown.rows;
-                }
-                if (newReg.startsWith("CN ")) {
-                    await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 2])
-                    let Wellington = await pool.query('SELECT towns.locations, registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id= 2')
-                    return Wellington.rows;
-                }
-                if (newReg.startsWith("CL ")) {
-                    await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 3])
-                    let Stellenbosch = await pool.query('SELECT towns.locations, regsitrations.descriptions FROM towns INNER JOIN rgistrations on towns.id = registrations.towns_id WHERE towns.id = 3')
-                    return Stellenbosch.rows;
-                }
-            }
-                
-                else {
-                    // this doesn't accept duplicate
-                    errMessage = "The registration number already exist";
-
+                } else {
+                    errMessage = "Invalid Town"
 
                 }
-
-
 
             } else {
-                errMessage = "Invalid Town"
+                errMessage = "Please Enter A Valid Registration number"
 
             }
 
-        } else {
-            errMessage = "Please Enter A Valid Registration number"
 
         }
-
-
-    }
     }
 
 
@@ -74,31 +75,47 @@ module.exports = function RegFactory(pool) {
     }
 
 
-    function filter(location) {
+    async function filter(location) {
 
-        var storeNumberPlate = [];
 
-        for (var i = 0; i < holdingNoPlate.length; i++) {
-            var currentReg = holdingNoPlate[i]
-            if (holdingNoPlate[i].startsWith(location)) {
-                storeNumberPlate.push(currentReg)
-            }
-
+        if (location === ' ') {
+            check = await pool.query('select * from registrations')
+            final = check.rows;
         }
-        // console.log(storeNumberPlate)
-        return storeNumberPlate;
+        if (location === 'CA') {
+            capetown = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 1;')
+            final = capetown.rows
+        }
+        if (location === 'CN') {
+            Wellington = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 2;')
+            final = Wellington.rows
+        }
+        if (location === 'CL') {
+            Stellenbosch = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 3;')
+            final = Stellenbosch.rows;
+        }
+
     }
+
+    function finalList() {
+        return final
+    }
+
 
     function getErrorMessage() {
         return errMessage;
     }
+   function  getDatabase(){
+     return database.rows.length 
 
+     }
 
     return {
         addRegNumbers,
         getReg,
         filter,
-        getErrorMessage
-
+        getErrorMessage,
+        finalList,
+        getDatabase
     }
 }

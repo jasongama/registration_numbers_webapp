@@ -46,7 +46,25 @@ RegApp.set('view engine', 'handlebars');
 RegApp.get("/", tag.index);
 
 RegApp.post("/reg_numbers", async function (req, res) {
+
+    if (req.body.town === "") {
+        req.flash('error', 'Please enter a registration number')
+       
+    }
+    if (req.body.greet === undefined) {
+        req.flash('error', 'Please Select the locations')
+       
+    } 
+    // if ( regNumbers.getDatabase() === 0){
+    //     req.flash('error', 'The registration number already exist')
+      
+    // }
+    
+    
     await regNumbers.addRegNumbers(req.body.town)
+    await regNumbers.filter(req.body.regNumber)
+    // console.log(await regNumbers.finalList());
+    
      res.redirect("/")
 })
 let PORT = process.env.PORT || 2000;
