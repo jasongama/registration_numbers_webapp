@@ -1,32 +1,36 @@
-<div class="row">
+<div class="">
 <form action="/reg_numbers" method="POST">
     <h1>Registration Numbers</h1>
     <div class="col-7">
         {{message}}
     </div>
     
-    <div class ="col-11">Enter the registration number
-         
+    <div class ="col-11">Enter the registration number:
         <input type="text" class="regName"  placeholder="eg CA 1235" name="town" value="" id="field_1"  maxlength= 10 > 
     </div>
 
     <div class = "col-10">
+        
             <button id="addButton" type="submit" name="Add" value="add">Add</button>
+
+            </form>
+            <form action="/reset" method="post">
             <button class="resetButton" type="submit" name="reset" value="Reset">Reset</button>
+            </form>
      </div>
-
+  <form action="/show" method="POST">
      <div class = "col-9">
-        <input type="radio" name="regNumber" class="RegTypeRadio" value="CA" id="id">CapeTown
-        <input type="radio" name="regNumber" class="RegTypeRadio" value="CN" id="id">Wellington
-        <input type="radio" name="regNumber" class="RegTypeRadio" value="CL" id="id">Stellenbosch
-        <input type="radio" name="regNumber" class="RegTypeRadio" Value="" id="id" checked>SelectAll
+        <input type="radio" name="radios" class="RegTypeRadio" value="CA" id="id">CapeTown
+        <input type="radio" name="radios" class="RegTypeRadio" value="CN" id="id">Wellington
+        <input type="radio" name="radios" class="RegTypeRadio" value="CL" id="id">Stellenbosch
+        <input type="radio" name="radios" class="RegTypeRadio" Value="" id="id" checked>SelectAll
 
      </div>
-  
+
      <div class ="col-8">
             <button class="showButton" type="submit" name="show" value="Show">FILTER BUTTON</button>
      </div>
-  
+  </form>
 
      <div class="col-5">
      <ul>{{#each numberPlates}}
@@ -36,6 +40,6 @@
     </div>
    
     </div>
-    </form>
+  
      
  

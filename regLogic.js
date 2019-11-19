@@ -8,65 +8,58 @@ module.exports = function RegFactory(pool) {
     var Stellenbosch;
     var errMessage = "";
     var check;
-
+    let database;
+    let newReg;
+    var regex = /[!@#$%^&*();,.?"^$:^+=${'}`_;''"\[.*?\]|<>]/i
 
     async function addRegNumbers(plate) {
-        var regex = /[!@#$%^&*();,.?"^$:^+=${'}`_;''"\[.*?\]|<>]/i
+        
         let testgex = regex.test(plate)
         var regStore = plate
         var regs = regStore.split(' ')
         regs[0] = regs[0].toUpperCase()
-        let newReg = regs.join(' ')
+        newReg = regs.join(' ')
 
         if (regStore !== '') {
             if (!testgex === true && newReg.length > 0) {
                 if (newReg.startsWith("CA ") || newReg.startsWith("CN ") || newReg.startsWith("CL ")) {
-                    let database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
+                    database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
                     check = await pool.query('select * from registrations')
+                    
+                    
                     if (database.rows.length === 0) {
                         if (!holdingNoPlate.includes(newReg)) {
-                            holdingNoPlate.push(newReg)
+                           holdingNoPlate.push(newReg)
 
                         }
                         if (newReg.startsWith("CA ")) {
-                            // console.log('reg ' + newReg)
+            
                             await pool.query('insert into registrations (descriptions , towns_id) values ($1, $2)', [newReg, 1]);
                             capetown = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 1;')
                             final = capetown.rows
 
-                            return capetown.rows;
+                    
                         }
                         if (newReg.startsWith("CN ")) {
                             await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 2])
                             Wellington = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 2;')
                             final = Wellington.rows
-                            return Wellington.rows;
+                  
                         }
                         if (newReg.startsWith("CL ")) {
                             await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 3])
                             Stellenbosch = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 3;')
                             final = Stellenbosch.rows;
-                            return Stellenbosch.rows;
+                          
                         }
-                    } else {
-                        // this doesn't accept duplicate
-                        errMessage = "The registration number already exist";
-                    }
-                } else {
-                    errMessage = "Invalid Town"
-
-                }
-
-            } else {
-                errMessage = "Please Enter A Valid Registration number"
-
-            }
+                    } 
+                } 
+            } 
 
 
         }
+        
     }
-
-
 
     function getReg() {
 
@@ -78,7 +71,7 @@ module.exports = function RegFactory(pool) {
     async function filter(location) {
 
 
-        if (location === ' ') {
+        if (location === '') {
             check = await pool.query('select * from registrations')
             final = check.rows;
         }
@@ -97,7 +90,9 @@ module.exports = function RegFactory(pool) {
 
     }
 
-    function finalList() {
+    async function finalList() {
+       // console.log(final);
+        
         return final
     }
 
@@ -105,10 +100,20 @@ module.exports = function RegFactory(pool) {
     function getErrorMessage() {
         return errMessage;
     }
-   function  getDatabase(){
+ async function getDatabase(){
+    database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
      return database.rows.length 
 
      }
+     async function resetbtn(){
+        final = [];
+       await pool.query('DELETE FROM registrations')
+     
+     }
+     async function regList(){
+         return regex
+     }
+
 
     return {
         addRegNumbers,
@@ -116,6 +121,9 @@ module.exports = function RegFactory(pool) {
         filter,
         getErrorMessage,
         finalList,
-        getDatabase
+        getDatabase,
+        resetbtn,
+        regList
+
     }
 }

@@ -35,8 +35,6 @@ RegApp.use(bodyParser.urlencoded({
     extended: false
 }));
 
-
-
 RegApp.use(bodyParser.json())
 
 RegApp.use(express.static("public"))
@@ -49,24 +47,33 @@ RegApp.post("/reg_numbers", async function (req, res) {
 
     if (req.body.town === "") {
         req.flash('error', 'Please enter a registration number')
-       
     }
-    if (req.body.greet === undefined) {
-        req.flash('error', 'Please Select the locations')
-       
+    
+    if (await regNumbers.getDatabase() === 0) {
+        req.flash('error', 'The registration number already exist')
+
+    }
+     if (await regNumbers.regList() === true) {
+        req.flash('error', 'Invalid Town')
     } 
-    // if ( regNumbers.getDatabase() === 0){
-    //     req.flash('error', 'The registration number already exist')
-      
-    // }
-    
-    
-    await regNumbers.addRegNumbers(req.body.town)
-    await regNumbers.filter(req.body.regNumber)
-    // console.log(await regNumbers.finalList());
-    
-     res.redirect("/")
+    else {
+        await regNumbers.addRegNumbers(req.body.town)
+    }
+    res.redirect("/")
 })
+RegApp.post("/show", async function (req, res) {
+
+    var check = req.body.radios
+    console.log(check);
+    await regNumbers.filter(req.body.radios)
+
+    res.redirect("/");
+});
+RegApp.post("/reset", async function (req, res) {
+    await regNumbers.resetbtn()
+    res.redirect("/");
+});
+
 let PORT = process.env.PORT || 2000;
 
 
