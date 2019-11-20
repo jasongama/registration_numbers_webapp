@@ -1,37 +1,88 @@
-// const assert = require('assert');
-// const regNumber = require("../regLogic");
-// const pg = require("pg");
-// const Pool = pg.Pool;
+const assert = require('assert');
+const regNumber = require("../regLogic");
+const pg = require("pg");
+const Pool = pg.Pool;
 
-// // we are using a special test database for the tests
-// const connectionString = process.env.DATABASE_URL || 'postgresql://codex:codex123@localhost/greetings';
+// we are using a special test database for the tests
+const connectionString = process.env.DATABASE_URL || 'postgresql://codex:codex123@localhost/greetings';
 
-// const pool = new Pool({
-//     connectionString
-// });
-// describe('The basic database web app', function(){
+const pool = new Pool({
+    connectionString
+});
+describe('The basic database web app', function(){
 
-//     beforeEach(async function(){
-//         // clean the tables before each test run
-//         await pool.query("delete from registrations;");
+    beforeEach(async function(){
+        // clean the tables before each test run
+        await pool.query("delete from registrations;");
         
-//     });
+    });
 
-//     it('It should count names  ', async function(){
+    it('It should add all registrations numbers that is inserted into input box', async function(){
         
-//         // the Factory Function is called CategoryService
-//         let greeting = regNumber(pool);
-//         await greeting.greetInput('English',"jason");
-//         await greeting.greetInput('IsiXhosa','Odwa');
-//         await greeting.greetInput('IsiZulu',"jesse");
-//         await greeting.greetInput('English','siwe');
+        // the Factory Function is called CategoryService
+        let regs = regNumber(pool);
+        await regs.addRegNumbers('CA 12364');
+        await regs.addRegNumbers('CN 43398');
+        await regs.addRegNumbers('CL 101111');
+        
        
      
         
-//         assert.equal(4,await greeting.getTotalCount());
+        assert.equal( [ 'CA 12364', 'CN 43398','CL 101111'  ],await regs.finalList());
+
+    });
+    it("It should show all the registration numbers from Wellington.", function () {
+                var regs =  RegFactory();
+                
+                regs.addRegNumbers ('CN 82345');
+                regs.addRegNumbers ('CL 64345');
+                regs.addRegNumbers ('CA 10111');
+                
+                
+               
+                assert.deepEqual( [ 'CN 82345', 'CL 64345', 'CA 10111' ], regs.filter("CN"));
+              
+
+
+});
+// describe('Registration', function () {
+//     it("it should be able to assign the list of registration numbers ", function () {
+//         var input =  RegFactory(["CA 12345", "CL 12345", "CN 45535"]);
+       
+//         assert.deepEqual(  ["CA 12345", "CL 12345", "CN 45535"] , input.getReg());
 
 //     });
+   
+//     it("It should show the registration numbers that startWith CL, when the filter button is clicked.", function () {
+//         var input =  RegFactory();
+//         input.addRegNumbers ("CA 12364");
+        
+//         input.addRegNumbers ("CN 43398");
+//         input.addRegNumbers ("CL 453436");
+//         input.addRegNumbers ("CL 101111");
+        
+       
+//         assert.deepEqual(  [ 'CL 453436', 'CL 101111' ], input.filter("CL"));
 
+//     });
+  
+//     it("It should not be able to  take a duplicate  registration number", function () {
+//         var input =  RegFactory();
+//         input.addRegNumbers ("CN 67890");
+//         input.addRegNumbers ("CN 67890");
+//         input.addRegNumbers ("CN 67890");       
+//         input.addRegNumbers ("CN 67890");
+       
+        
+       
+//         assert.deepEqual( [ 'CN 67890'] , input.getReg());
+
+//   
+        
+        //     });
+
+
+});
 // describe('Registration', function () {
 //     it("it should be able to assign the list of registration numbers ", function () {
 //         var input =  RegFactory(["CA 12345", "CL 12345", "CN 45535"]);
@@ -128,7 +179,10 @@
         
        
 //         assert.deepEqual( 'The registration number already exist' , input.getErrorMessage());
+ 
+//         assert.deepEqual(  ["CA 12345", "CL 12345", "CN 45535"] , input.getReg());
 
+//     });
 //     });
 //     it("It should give  you an errorMessage if the town is invalid ", function () {
 //         var input =  RegFactory();

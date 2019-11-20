@@ -43,24 +43,25 @@ RegApp.set('view engine', 'handlebars');
 
 RegApp.get("/", tag.index);
 
-RegApp.post("/reg_numbers", async function (req, res) {
 
-    if (req.body.town === "") {
-        req.flash('error', 'Please enter a registration number')
+RegApp.post("/reg_numbers", async function (req, res) {
+    var regex = /[!@#$%^&*();,.?"^$:^+=${'}`_;''"\[.*?\]|<>]/i
+    let testgex = regex.test(req.body.town)
+    console.log(req.body.town);
+    
+    if (req.body.town === ""||!testgex === false || req.body.town <= 0) {
+        req.flash('error', 'Please enter a valid registration number')
     }
     
-    if (await regNumbers.getDatabase() === 0) {
+    if (await regNumbers.getDatabase() > 0) { 
+     
         req.flash('error', 'The registration number already exist')
-
-    }
-     if (await regNumbers.regList() === true) {
-        req.flash('error', 'Invalid Town')
-    } 
-    else {
+    }  
         await regNumbers.addRegNumbers(req.body.town)
-    }
+    
     res.redirect("/")
 })
+
 RegApp.post("/show", async function (req, res) {
 
     var check = req.body.radios

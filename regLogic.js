@@ -20,14 +20,15 @@ module.exports = function RegFactory(pool) {
         regs[0] = regs[0].toUpperCase()
         newReg = regs.join(' ')
 
-        if (regStore !== '') {
+        if (newReg !== ' ') {
             if (!testgex === true && newReg.length > 0) {
                 if (newReg.startsWith("CA ") || newReg.startsWith("CN ") || newReg.startsWith("CL ")) {
                     database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
                     check = await pool.query('select * from registrations')
                     
+               //     console.log(database.rows.length);
                     
-                    if (database.rows.length === 0) {
+                   if (database.rows.length === 0) {
                         if (!holdingNoPlate.includes(newReg)) {
                            holdingNoPlate.push(newReg)
 
@@ -73,6 +74,8 @@ module.exports = function RegFactory(pool) {
 
         if (location === '') {
             check = await pool.query('select * from registrations')
+           
+            
             final = check.rows;
         }
         if (location === 'CA') {
