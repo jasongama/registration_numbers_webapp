@@ -1,6 +1,5 @@
 module.exports = function RegFactory(pool) {
 
-
     var holdingNoPlate = [];
     var final = [];
     var capetown;
@@ -23,10 +22,11 @@ module.exports = function RegFactory(pool) {
         if (newReg !== ' ') {
             if (!testgex === true && newReg.length > 0) {
                 if (newReg.startsWith("CA ") || newReg.startsWith("CN ") || newReg.startsWith("CL ")) {
+                    console.log('test')
                     database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
                     check = await pool.query('select * from registrations')
                     
-               //     console.log(database.rows.length);
+                    // console.log(database.rowCount);
                     
                    if (database.rows.length === 0) {
                         if (!holdingNoPlate.includes(newReg)) {
@@ -71,11 +71,8 @@ module.exports = function RegFactory(pool) {
 
     async function filter(location) {
 
-
         if (location === '') {
             check = await pool.query('select * from registrations')
-           
-            
             final = check.rows;
         }
         if (location === 'CA') {
@@ -103,8 +100,12 @@ module.exports = function RegFactory(pool) {
     function getErrorMessage() {
         return errMessage;
     }
- async function getDatabase(){
+ async function getDatabase(reg){
+    var regs = reg.split(' ')
+    regs[0] = regs[0].toUpperCase()
+    newReg = regs.join(' ')
     database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
+    // console.log(database.rows.length );
      return database.rows.length 
 
      }
