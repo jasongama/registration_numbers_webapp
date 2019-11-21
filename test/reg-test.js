@@ -17,64 +17,66 @@ describe('The basic database web app', async function () {
 
     });
 
-    it('It should add all registrations numbers that is inserted into input box', async function () {
+    it('It should add the registration numbers from Stellenbosch', async function () {
 
         // the Factory Function is called CategoryService
         let regs = regNumber(pool);
-        await regs.addRegNumbers('CA 12364');
-        await regs.addRegNumbers('CN 43398');
-        await regs.addRegNumbers('CL 101111');
 
+        await regs.addRegNumbers('CL 101111 ');
 
-
-
-        assert.equal(['CA 12364', 'CN 43398', 'CL 101111'], await regs.finalList());
+        assert.deepEqual([{
+            locations: 'CL',
+            descriptions: 'CL 101111 '
+        }], await regs.finalList());
 
     });
-    it("It should show all the registration numbers from Wellington.", async function () {
+
+
+    it("It should  add registration numbers from Wellington.", async function () {
         let regs = regNumber(pool);
-        await  regs.addRegNumbers('CN 82345');
-        await regs.addRegNumbers('CL 64345');
-        await regs.addRegNumbers('CA 10111');
-        await regs.addRegNumbers('CN 74474');
+        await regs.addRegNumbers('CN 82345');
 
+        assert.deepEqual([{
+            locations: 'CN',
+            descriptions: 'CN 82345'
+        }], await regs.finalList());
 
-        assert.deepEqual(['CN 82345', 'CL 64345', 'CA 10111','CN 74474'], await regs.filter("CN"));
+    });
+    it("It should  add registration numbers from CapeTown.", async function () {
+        let regs = regNumber(pool);
+        await regs.addRegNumbers('CA 485904');
 
-
+        assert.deepEqual([{
+            locations: 'CA',
+            descriptions: 'CA 485904'
+        }], await regs.finalList());
 
     });
 
-   it("it should be able to show all the registration numbers from capeTown ", async function () {
-
-    
-    let regs = regNumber(pool);
-   await regs.addRegNumbers('CA 88488');
-   await  regs.addRegNumbers('CN 82345');
-    await regs.addRegNumbers('CL 64345');
-    await regs.addRegNumbers('CA 10111');
-    await regs.addRegNumbers('CA 76746');
 
 
 
-    assert.deepEqual(['CN 82345', 'CL 64345', 'CA 10111', 'CA 76746','CA 88488' ], await regs.filter("CA"));
+    it("It should not be able to  take a duplicate  registration number", async function () {
+        let regs = regNumber(pool);
+        await regs.addRegNumbers("CN 67890");
+        await regs.addRegNumbers("CN 67890");
+        await regs.addRegNumbers("CN 67890");
+        await regs.addRegNumbers("CN 67890");
 
-       });
+        await regs.filter('CN')
 
-        it("It should not be able to  take a duplicate  registration number", async function () {
-            let regs = regNumber(pool);
-           await regs.addRegNumbers ("CN 67890");
-          await  regs.addRegNumbers ("CN 67890");
-           await regs.addRegNumbers ("CN 67890");       
-            await regs.addRegNumbers ("CN 67890");
+        assert.deepEqual([{
+            locations: 'CN',
+            descriptions: 'CN 67890'
+        }], await regs.finalList());
 
+    });
 
+    it("It should not add a empty strings", async function () {
+        let regs = regNumber(pool);
+        await regs.addRegNumbers(" ");
 
-            assert.deepEqual( [ 'CN 67890'] , await regs.finalList());
+        assert.deepEqual([], await regs.finalList());
 
-      
-
-        });
-
-
+    });
 });
