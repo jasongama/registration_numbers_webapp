@@ -8,7 +8,7 @@ services:
 
 env:
   - DATABASE_URL=postgresql://postgres@localhost:5432/greetings
-  
+
 before_script:
   - psql -c 'CREATE DATABASE greetings;' -U postgres
   - psql -U postgres -d greetings -a -f table.sql
