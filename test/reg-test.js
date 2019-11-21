@@ -13,7 +13,7 @@ describe('The basic database web app', async function () {
 
     beforeEach(async function () {
         // clean the tables before each test run
-        await pool.query("delete from registrations;");
+        await pool.query("delete from towns;");
 
     });
 
