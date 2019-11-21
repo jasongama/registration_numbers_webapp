@@ -13,7 +13,11 @@ describe('The basic database web app', async function () {
 
     beforeEach(async function () {
         // clean the tables before each test run
-        await pool.query("delete from towns;");
+        await pool.query("insert into towns(locations) values('CA')")
+        await pool.query("insert into towns(locations) values('CN')")
+        await pool.query("insert into towns(locations) values('CL')")
+        await pool.query("delete from registrations;");
+
 
     });
 
