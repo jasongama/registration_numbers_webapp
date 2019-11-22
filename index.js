@@ -47,23 +47,25 @@ RegApp.get("/", tag.index);
 RegApp.post("/reg_numbers", async function (req, res) {
     var regex = /[!@#$%^&*();,.?"^$:^+=${'}`_;''"\[.*?\]|<>]/i
     let testgex = regex.test(req.body.town)
-    if (req.body.town !== '') {
+
+    if (req.body.town !== '' || testgex === true) {
         if (await regNumbers.getDatabase(req.body.town) > 0) {
             req.flash('error', 'The registration number already exist')
         } else {
-            req.flash('error', 'Please enter a valid registration number')
+          var response = await regNumbers.addRegNumbers(req.body.town)
         }
-    } else {
+    } 
+        if(response === false){
         req.flash('error', 'Please enter a valid registration number')
-    }
-    await regNumbers.addRegNumbers(req.body.town)
+        }
+    
     res.redirect("/")
 })
 
 RegApp.post("/show", async function (req, res) {
 
     var check = req.body.radios
-    await regNumbers.filter(req.body.radios)
+    await regNumbers.filter(check)
 
     res.redirect("/");
 });
