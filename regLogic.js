@@ -86,7 +86,7 @@ module.exports = function RegFactory(pool) {
     }
 
     async function finalList() {
-        let db = await pool.query('select * from registrations')
+        let db = await pool.query('select descriptions, towns_id from registrations')
         return db.rows
     }
 

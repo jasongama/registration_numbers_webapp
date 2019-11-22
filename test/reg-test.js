@@ -28,32 +28,23 @@ describe('The basic database web app', async function () {
 
         await regs.addRegNumbers('CL 101111 ');
 
-        assert.deepEqual([{
-            locations: 'CL',
-            descriptions: 'CL 101111 '
-        }], await regs.finalList());
+        assert.deepEqual([ { descriptions: 'CL 101111 ', towns_id: 3 } ] , await regs.finalList());
 
     });
 
 
     it("It should  add registration numbers from Wellington.", async function () {
         let regs = regNumber(pool);
-        await regs.addRegNumbers('CN 82345');
+        await regs.addRegNumbers('CN 67890');
 
-        assert.deepEqual([{
-            locations: 'CN',
-            descriptions: 'CN 82345'
-        }], await regs.finalList());
+        assert.deepEqual( [ { descriptions: 'CN 67890', towns_id: 2 } ], await regs.finalList());
 
     });
     it("It should  add registration numbers from CapeTown.", async function () {
         let regs = regNumber(pool);
         await regs.addRegNumbers('CA 485904');
 
-        assert.deepEqual([{
-            locations: 'CA',
-            descriptions: 'CA 485904'
-        }], await regs.finalList());
+        assert.deepEqual([ { descriptions: 'CA 485904', towns_id: 1 } ], await regs.finalList());
 
     });
 
@@ -69,10 +60,7 @@ describe('The basic database web app', async function () {
 
         await regs.filter('CN')
 
-        assert.deepEqual([{
-            locations: 'CN',
-            descriptions: 'CN 67890'
-        }], await regs.finalList());
+        assert.deepEqual ([ { descriptions: 'CN 67890', towns_id: 2 } ], await regs.finalList());
 
     });
 
