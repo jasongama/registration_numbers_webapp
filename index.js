@@ -47,15 +47,18 @@ RegApp.post("/reg_numbers", async function (req, res) {
     var regex = /[!@#$%^&*();,.?"^$:^+=${'}`_;''"\[.*?\]|<>]/i
     let testgex = regex.test(req.body.town)
 
-    if (req.body.town !== '' || testgex === true) {
+    if (req.body.town === '') {
+        req.flash('error', 'Please enter a valid registration number')
+    
+    }
         if (await regNumbers.getDatabase(req.body.town) > 0) {
             req.flash('error', 'The registration number already exist')
         } else {
             var response = await regNumbers.addRegNumbers(req.body.town)
 
         }
-    }
-    if (response === false) {
+    
+    if (response === false ) {
         req.flash('error', 'Please enter a valid registration number')
     }
     await regNumbers.finalevent()
