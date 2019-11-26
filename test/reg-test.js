@@ -28,7 +28,10 @@ describe('The basic database web app', async function () {
 
         await regs.addRegNumbers('CL 101111 ');
 
-        assert.deepEqual([ { descriptions: 'CL 101111 ', towns_id: 3 } ] , await regs.finalList());
+        assert.deepEqual([{
+            descriptions: 'CL 101111 ',
+            towns_id: 3
+        }], await regs.finalList());
 
     });
 
@@ -37,14 +40,20 @@ describe('The basic database web app', async function () {
         let regs = regNumber(pool);
         await regs.addRegNumbers('CN 67890');
 
-        assert.deepEqual( [ { descriptions: 'CN 67890', towns_id: 2 } ], await regs.finalList());
+        assert.deepEqual([{
+            descriptions: 'CN 67890',
+            towns_id: 2
+        }], await regs.finalList());
 
     });
     it("It should  add registration numbers from CapeTown.", async function () {
         let regs = regNumber(pool);
         await regs.addRegNumbers('CA 485904');
 
-        assert.deepEqual([ { descriptions: 'CA 485904', towns_id: 1 } ], await regs.finalList());
+        assert.deepEqual([{
+            descriptions: 'CA 485904',
+            towns_id: 1
+        }], await regs.finalList());
 
     });
 
@@ -58,11 +67,29 @@ describe('The basic database web app', async function () {
         await regs.addRegNumbers("CN 67890");
         await regs.addRegNumbers("CN 67890");
 
-        await regs.filter('CN')
 
-        assert.deepEqual ([ { descriptions: 'CN 67890', towns_id: 2 } ], await regs.finalList());
+        assert.deepEqual([{
+            descriptions: 'CN 67890',
+            towns_id: 2
+        }], await regs.finalList());
 
     });
+
+    it("It should not be able to  take a duplicate  registration number", async function () {
+        let regs = regNumber(pool);
+        await regs.addRegNumbers("CN 67890");
+        await regs.addRegNumbers("CN 67890");
+        await regs.addRegNumbers("CN 67890");
+        await regs.addRegNumbers("CN 67890");
+
+
+        assert.deepEqual([{
+            descriptions: 'CN 67890',
+            towns_id: 2
+        }], await regs.finalList());
+
+    });
+
 
     it("It should not add a empty strings", async function () {
         let regs = regNumber(pool);

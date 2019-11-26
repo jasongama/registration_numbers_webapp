@@ -24,30 +24,34 @@ module.exports = function RegFactory(pool) {
                 if (newReg.startsWith("CA ") || newReg.startsWith("CN ") || newReg.startsWith("CL ")) {
 
                     database = await pool.query('Select * from registrations WHERE descriptions  = $1', [newReg]);
-                    check = await pool.query('select * from registrations')
+
 
                     if (database.rows.length === 0) {
-                        if (!holdingNoPlate.includes(newReg)) {
-                            holdingNoPlate.push(newReg)
-                        }
-                        if (newReg.startsWith("CA ")) {
+
+                        if (newReg.startsWith('CA ')) {
                             await pool.query('insert into registrations (descriptions , towns_id) values ($1, $2)', [newReg, 1]);
                             capetown = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 1;')
-                            final = capetown.rows
+                            check = await pool.query('select * from registrations')
+                            final = check.rows;
+                    
+
                         }
-                        if (newReg.startsWith("CN ")) {
+                        if (newReg.startsWith('CN ')) {
                             await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 2])
                             Wellington = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 2;')
-                            final = Wellington.rows
+                            check = await pool.query('select * from registrations')
+                            final = check.rows;
 
                         }
-                        if (newReg.startsWith("CL ")) {
+                        if (newReg.startsWith('CL ')) {
                             await pool.query('insert into registrations (descriptions , towns_id) values($1, $2)', [newReg, 3])
                             Stellenbosch = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 3;')
-                            final = Stellenbosch.rows;
-
+                            check = await pool.query('select * from registrations')
+                            final = check.rows;
+                          
                         }
                     }
+
                 } else {
                     return false
                 }
@@ -70,17 +74,19 @@ module.exports = function RegFactory(pool) {
             check = await pool.query('select * from registrations')
             final = check.rows;
         }
-        if (location === 'CA') {
+        if (location === "CA") {
             capetown = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 1;')
             final = capetown.rows
         }
-        if (location === 'CN') {
+        if (location === "CN") {
             Wellington = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 2;')
             final = Wellington.rows
         }
-        if (location === 'CL') {
+        if (location === "CL") {
             Stellenbosch = await pool.query('SELECT towns.locations , registrations.descriptions FROM towns INNER JOIN registrations ON towns.id = registrations.towns_id WHERE towns.id = 3;')
             final = Stellenbosch.rows;
+
+
         }
 
     }
@@ -89,10 +95,11 @@ module.exports = function RegFactory(pool) {
         let db = await pool.query('select descriptions, towns_id from registrations')
         return db.rows
     }
-
-    function getErrorMessage() {
-        return errMessage;
+    async function finalevent() {
+        check = await pool.query('select * from registrations')
+        return final
     }
+
     async function getDatabase(reg) {
         var regs = reg.split(' ')
         regs[0] = regs[0].toUpperCase()
@@ -116,11 +123,12 @@ module.exports = function RegFactory(pool) {
         addRegNumbers,
         getReg,
         filter,
-        getErrorMessage,
+        // getErrorMessage,
         finalList,
         getDatabase,
         resetbtn,
-        regList
+        regList,
+        finalevent
 
     }
 }
